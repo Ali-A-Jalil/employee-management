@@ -1,0 +1,145 @@
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addEmployee } from "../features/employeeSlice";
+import { useNavigate } from "react-router-dom";
+
+const AddEmployee = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    age: "",
+    hireDate: "",
+    isActive: true,
+  });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(addEmployee(formData));
+    alert("Employee added successfully!");
+    setFormData({
+      name: "",
+      email: "",
+      age: "",
+      hireDate: "",
+      isActive: true,
+    });
+    navigate("/dashboard"); // العودة للـ Dashboard بعد الإضافة
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <header className="bg-blue-500 text-white py-4 px-6 shadow-lg flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Employee Management System</h1>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-100 transition"
+        >
+          Go to Dashboard
+        </button>
+      </header>
+
+      {/* Main Form */}
+      <div className="flex-grow flex items-center justify-center">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+            Add New Employee
+          </h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2">Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter employee name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter employee email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2">Age</label>
+              <input
+                type="number"
+                name="age"
+                placeholder="Enter employee age"
+                value={formData.age}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2">Hire Date</label>
+              <input
+                type="date"
+                name="hireDate"
+                value={formData.hireDate}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={formData.isActive}
+                onChange={(e) =>
+                  setFormData({ ...formData, isActive: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <label className="text-gray-700">Active</label>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard")}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              >
+                Add Employee
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddEmployee;
