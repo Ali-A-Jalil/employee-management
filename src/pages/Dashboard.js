@@ -111,6 +111,7 @@ const Dashboard = () => {
       </div>
     );
   }
+  
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -164,12 +165,15 @@ const Dashboard = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              {data.map((row) => {
+              {employees.map((row) => {
+                
                 prepareRow(row);
                 return (
                   <motion.tr
                     {...row.getRowProps()}
                     className="hover:bg-gray-100 transition duration-150"
+                    
+                    
                   >
                     {row.cells.map((cell) => (
                       <td
