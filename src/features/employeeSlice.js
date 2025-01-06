@@ -20,6 +20,25 @@ export const fetchEmployees = createAsyncThunk(
 );
 
 // إضافة موظف جديد
+// export const addEmployee = createAsyncThunk(
+//   "employee/addEmployee",
+//   async (employee) => {
+//     try {
+//       const response = await axios.post(
+//         "https://aseer.aait.com.sa:4801/API/D9F4BC3B728D4BA7BB3E8FC1EB43FD45/Test/Custom/PrcEmployeeDataIns",
+//         employee
+//       );
+//       console.log("API Response:", response.data); // عرض استجابة الخادم
+//       if (response.data && response.data.employee) {
+//         return response.data.employee; // إذا نجح الطلب
+//       }
+//       throw new Error("Invalid response format"); // إذا كانت الاستجابة غير متوقعة
+//     } catch (error) {
+//       console.error("Error in API request:", error.response?.data || error.message);
+//       throw new Error("Failed to add employee."); // رمي الخطأ ليظهر في الواجهة
+//     }
+//   }
+// );
 export const addEmployee = createAsyncThunk(
   "employee/addEmployee",
   async (employee) => {
@@ -28,15 +47,19 @@ export const addEmployee = createAsyncThunk(
         "https://aseer.aait.com.sa:4801/API/D9F4BC3B728D4BA7BB3E8FC1EB43FD45/Test/Custom/PrcEmployeeDataIns",
         employee
       );
+      console.log("API Response:", response.data);
       if (response.data && response.data.employee) {
-        return response.data.employee; // الرد يحتوي على "employee"
+        return response.data.employee;
       }
-      throw new Error("Invalid API response for added employee");
+      throw new Error("Invalid API response");
     } catch (error) {
-      throw new Error("Failed to add employee");
+      console.error("Error in API request:", error.response ? error.response.data : error);
+      throw new Error("Failed to add employee.");
     }
   }
 );
+
+
 
 // تحديث بيانات موظف
 export const updateEmployee = createAsyncThunk(
