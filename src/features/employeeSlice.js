@@ -9,15 +9,12 @@ export const fetchEmployees = createAsyncThunk(
       const response = await axios.get(
         "https://aseer.aait.com.sa:4801/API/D9F4BC3B728D4BA7BB3E8FC1EB43FD45/Test/Custom/PrcEmployeeDataSel"
       );
-
-      if (Array.isArray(response.data)) {
-        return response.data;
+      if (response.data && response.data.employees) {
+        return response.data.employees; // الرد يحتوي على "employees"
       }
-      console.error("API response is not an array:", response.data);
-      return [];
+      throw new Error("Invalid API response");
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      throw new Error("Failed to fetch employees.");
+      throw new Error("Failed to fetch employees");
     }
   }
 );
@@ -31,10 +28,12 @@ export const addEmployee = createAsyncThunk(
         "https://aseer.aait.com.sa:4801/API/D9F4BC3B728D4BA7BB3E8FC1EB43FD45/Test/Custom/PrcEmployeeDataIns",
         employee
       );
-      return response.data;
+      if (response.data && response.data.employee) {
+        return response.data.employee; // الرد يحتوي على "employee"
+      }
+      throw new Error("Invalid API response for added employee");
     } catch (error) {
-      console.error("Error adding employee:", error);
-      throw new Error("Failed to add employee.");
+      throw new Error("Failed to add employee");
     }
   }
 );
@@ -48,10 +47,12 @@ export const updateEmployee = createAsyncThunk(
         "https://aseer.aait.com.sa:4801/API/D9F4BC3B728D4BA7BB3E8FC1EB43FD45/Test/Custom/PrcEmployeeDataUpd",
         employee
       );
-      return response.data;
+      if (response.data && response.data.employee) {
+        return response.data.employee;
+      }
+      throw new Error("Invalid API response for updated employee");
     } catch (error) {
-      console.error("Error updating employee:", error);
-      throw new Error("Failed to update employee.");
+      throw new Error("Failed to update employee");
     }
   }
 );
@@ -65,10 +66,9 @@ export const deleteEmployee = createAsyncThunk(
         "https://aseer.aait.com.sa:4801/API/D9F4BC3B728D4BA7BB3E8FC1EB43FD45/Test/Custom/PrcEmployeeDataDel",
         { id }
       );
-      return id; // إعادة الـ ID لتحديث الحالة
+      return id;
     } catch (error) {
-      console.error("Error deleting employee:", error);
-      throw new Error("Failed to delete employee.");
+      throw new Error("Failed to delete employee");
     }
   }
 );
@@ -80,30 +80,13 @@ const employeeSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // جلب الموظفين
-      .addCase(fetchEmployees.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
       .addCase(fetchEmployees.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.employees = action.payload;
-      })
-      .addCase(fetchEmployees.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
       })
 
       // إضافة موظف جديد
       .addCase(addEmployee.fulfilled, (state, action) => {
-        if (action.payload && typeof action.payload === "object") {
-          state.employees = [...state.employees, action.payload];
-        } else {
-          console.error("Invalid response for added employee:", action.payload);
-        }
-      })
-      .addCase(addEmployee.rejected, (state, action) => {
-        console.error("Failed to add employee:", action.error.message);
-        state.error = action.error.message;
+        state.employees.push(action.payload); // إضافة الموظف الجديد
       })
 
       // تحديث بيانات موظف
@@ -112,12 +95,8 @@ const employeeSlice = createSlice({
           (employee) => employee.id === action.payload.id
         );
         if (index !== -1) {
-          state.employees[index] = action.payload;
+          state.employees[index] = action.payload; // تحديث الموظف
         }
-      })
-      .addCase(updateEmployee.rejected, (state, action) => {
-        console.error("Failed to update employee:", action.error.message);
-        state.error = action.error.message;
       })
 
       // حذف موظف
@@ -125,10 +104,6 @@ const employeeSlice = createSlice({
         state.employees = state.employees.filter(
           (employee) => employee.id !== action.payload
         );
-      })
-      .addCase(deleteEmployee.rejected, (state, action) => {
-        console.error("Failed to delete employee:", action.error.message);
-        state.error = action.error.message;
       });
   },
 });
