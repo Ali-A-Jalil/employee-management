@@ -22,18 +22,15 @@ const AddEmployee = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(addEmployee(formData));
-    alert("Employee added successfully!");
-    setFormData({
-      name: "",
-      email: "",
-      age: "",
-      hireDate: "",
-      isActive: true,
-    });
-    navigate("/dashboard"); // العودة للـ Dashboard بعد الإضافة
+    try {
+      await dispatch(addEmployee(formData)).unwrap(); // إضافة الموظف
+      alert("Employee added successfully!");
+      navigate("/dashboard"); // التوجيه للـ Dashboard
+    } catch (error) {
+      alert("Failed to add employee. Please try again.");
+    }
   };
 
   return (
