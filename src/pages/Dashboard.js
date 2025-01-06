@@ -18,13 +18,12 @@ const Dashboard = () => {
 
   // Fetch employees data
   useEffect(() => {
-    dispatch(fetchEmployees());
-  }, [dispatch]);
-
-  // Update filtered data when employees change
-  useEffect(() => {
-    setFilteredData(employees);
-  }, [employees]);
+    if (!employees.length) {
+      dispatch(fetchEmployees());
+    } else {
+      setFilteredData(employees); // Update filtered data if employees change
+    }
+  }, [dispatch, employees]);
 
   // Handle search functionality
   const handleSearch = useCallback(
